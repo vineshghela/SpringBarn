@@ -13,7 +13,7 @@ public class SpringBeanUtil {
 
 	// merge not null - it is used for ensuring we dont get an error when we our
 	// update statement
-	// we need to create a customer handler --> will handle our error if one occurs.
+	// we need to create a custom handler --> will handle our error if one occurs.
 
 	// Methoddd
 	public static void mergeNotNull(Object source, Object target) {
@@ -33,7 +33,8 @@ public class SpringBeanUtil {
 
 	}
 
-	// this just check that our object is not during update and prevents spring from
+	// this just check that our object is not empty during updates and prevents
+	// spring from
 	// dying.
 
 }

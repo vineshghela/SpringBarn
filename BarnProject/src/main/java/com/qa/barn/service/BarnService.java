@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qa.barn.dto.BarnDto;
+import com.qa.barn.exceptions.BarnNotFoundException;
 import com.qa.barn.persistence.domain.Barn;
 import com.qa.barn.persistence.repo.BarnRepo;
 import com.qa.barn.utils.SpringBeanUtil;
@@ -52,16 +53,16 @@ public class BarnService {
 
 	// Read by Id
 	public BarnDto readById(Long id) {
-		return this.mapToDTO(this.repo.findById(id).orElseThrow());
+		return this.mapToDTO(this.repo.findById(id).orElseThrow(BarnNotFoundException::new));
 	}
 
 	// Update
 	public BarnDto update(BarnDto barnDto, Long id) {
 		// check if the record exists
-		Barn toUpdate = this.repo.findById(id).orElseThrow();
+		Barn toUpdate = this.repo.findById(id).orElseThrow(BarnNotFoundException::new);
 		// set the record to update
-		toUpdate.setname(barnDto.getname());
-//		check during the updaye for any nulls
+		toUpdate.setName(barnDto.getName());
+//		check during the update for any nulls
 		SpringBeanUtil.mergeNotNull(barnDto, toUpdate);
 //		return the method from the repo which is to save
 		return this.mapToDTO(this.repo.save(toUpdate));
@@ -69,8 +70,17 @@ public class BarnService {
 
 	// Delete
 	public boolean delete(Long id) {
-		this.repo.deleteById(id);//
-		return !this.repo.existsById(id);//
+		this.repo.deleteById(id);// where we actually do the delete
+		return !this.repo.existsById(id);// verify
+	}
+
+	// Custom methods
+	public List<BarnDto> findbyColour(String colour) {
+		return this.repo.findByColour(colour).stream().map(this::mapToDTO).collect(Collectors.toList());
+	}
+
+	public List<BarnDto> findByName(String name) {
+		return this.repo.findByName(name).stream().map(this::mapToDTO).collect(Collectors.toList());
 	}
 
 }
